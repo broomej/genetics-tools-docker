@@ -1,7 +1,8 @@
 name: Build and push Docker image to dockerhub
-
 on:
   workflow_dispatch:
+  schedule:
+    - cron:  '30 4 * * *'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,4 +17,4 @@ jobs:
       with:
        context:
        push: true
-       tags: broome/genetics-tools:v9.14.1
+       tags: broome/genetics-tools:v9.14.2
