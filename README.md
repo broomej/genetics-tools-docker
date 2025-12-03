@@ -1,3 +1,4 @@
-# Docker image with PLINK v1.9 installed.
+# Docker image with common genetics tools
 
-PLINK is installed from the AUR.
+Includes PLINK (versions 1, 1.9 and 2), VCFtools and BCFtools installed from
+the AUR.
