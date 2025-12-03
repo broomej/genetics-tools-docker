@@ -1,2 +1,5 @@
 FROM snakemake/snakemake:stable
-RUN micromamba install bioconda::plink bioconda::plink2 bioconda::vcftools bioconda::bcftools
+ENV CONDA_PKGS bioconda::bioconductor-genesis conda-forge::r-tidyverse \
+    conda-forge::r-ggally bioconda::plink bioconda::plink2 bioconda::vcftools \
+    bioconda::bcftools
+RUN micromamba install CONDA_PKGS && micromamba clean --all -y
