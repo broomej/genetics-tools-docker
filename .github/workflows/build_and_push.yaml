@@ -16,4 +16,4 @@ jobs:
       with:
        context:
        push: true
-       tags: broome/genetics-tools:latest
+       tags: broome/genetics-tools:v9.14.1
