@@ -16,4 +16,4 @@ jobs:
       with:
        context:
        push: true
-       tags: broome/plink1.9:latest
+       tags: broome/genetics-tools:latest
