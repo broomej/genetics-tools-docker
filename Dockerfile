@@ -1,8 +1,9 @@
-FROM snakemake/snakemake:v9.14.2
+FROM snakemake/snakemake:v9.14.3
 ENV CONDA_PKGS="bioconda::bioconductor-genesis conda-forge::r-tidyverse \
     conda-forge::r-ggally bioconda::plink bioconda::plink2 bioconda::vcftools \
     bioconda::bcftools"
 RUN eval "$(micromamba shell hook --shell bash)" && \
     micromamba activate /opt/conda/envs/snakemake && \
     micromamba install ${CONDA_PKGS} && \
-    micromamba clean --all -y
+    micromamba clean --all -y && \
+    ln -s /opt/conda/bin/plink /opt/conda/bin/plink1.9
