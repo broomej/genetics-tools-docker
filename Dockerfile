@@ -5,5 +5,4 @@ ENV CONDA_PKGS="bioconda::bioconductor-genesis conda-forge::r-tidyverse \
 RUN eval "$(micromamba shell hook --shell bash)" && \
     micromamba activate /opt/conda/envs/snakemake && \
     micromamba install ${CONDA_PKGS} && \
-    micromamba clean --all -y && \
-    ln -s /opt/conda/bin/plink /opt/conda/bin/plink1.9
+    micromamba clean --all -y
