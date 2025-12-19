@@ -19,6 +19,12 @@ jobs:
     - name: Get current version from Dockerfile
       id: version
       run: echo "CURRENT_VERSION=$(grep 'FROM snakemake/snakemake:' Dockerfile | sed 's/.*://')" >> $GITHUB_OUTPUT
+
+    - name: Get latest Snakemake version from GitHub Releases
+      id: snakemake_version
+      run: |
+        LATEST_SNAKEMAKE_VERSION=$(curl -s "https://api.github.com/repos/snakemake/snakemake/releases/latest" | jq -r '.tag_name' | sed 's/^v//')
+        echo "LATEST_SNAKEMAKE_VERSION=${LATEST_SNAKEMAKE_VERSION}" >> $GITHUB_OUTPUT
     - name: Build and push to dockerhub
       uses: docker/build-push-action@v6
       with:
@@ -31,27 +37,54 @@ jobs:
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
         CURRENT_VERSION=${{ steps.version.outputs.CURRENT_VERSION }}
-        echo "Current version: $CURRENT_VERSION"
+        LATEST_SNAKEMAKE_VERSION=${{ steps.snakemake_version.outputs.LATEST_SNAKEMAKE_VERSION }}
 
-        # Strip 'v' prefix and split into components
-        VERSION_STRING=$(echo $CURRENT_VERSION | sed 's/v//')
-        MAJOR=$(echo $VERSION_STRING | cut -d. -f1)
-        MINOR=$(echo $VERSION_STRING | cut -d. -f2)
-        PATCH=$(echo $VERSION_STRING | cut -d. -f3)
+        echo "Current Snakemake version in Dockerfile: $CURRENT_VERSION"
+        echo "Latest Snakemake version on Docker Hub: $LATEST_SNAKEMAKE_VERSION"
 
-        # Increment patch version
-        NEW_PATCH=$((PATCH + 1))
-        NEW_VERSION="v${MAJOR}.${MINOR}.${NEW_PATCH}"
-        echo "New version: $NEW_VERSION"
+        # Compare versions
+        # Function to compare semantic versions
+        vercomp () {
+            # Strip 'v' prefix for consistent comparison
+            local v_a=$(echo "$1" | sed 's/^v//')
+            local v_b=$(echo "$2" | sed 's/^v//')
 
-        # Replace version in Dockerfile
-        sed -i "s/${CURRENT_VERSION}/${NEW_VERSION}/g" Dockerfile
+            if [[ "$v_a" == "$v_b" ]]
+            then
+                return 0
+            fi
+            local IFS=.
+            local i v1=($v_a) v2=($v_b)
+            for ((i=${#v1[@]}; i<${#v2[@]}; i++)); do v1[i]=0; done
+            for ((i=0; i<${#v1[@]}; i++)); do
+                if [[ -z ${v2[i]} ]]; then
+                    # v2 is shorter, so v1 is newer
+                    return 1
+                fi
+                if ((10#${v1[i]} > 10#${v2[i]}))
+                then
+                    return 1
+                fi
+                if ((10#${v1[i]} < 10#${v2[i]}))
+                then
+                    return 2
+                fi
+            done
+            return 0
+        }
 
-        # Commit and push changes
-        git add Dockerfile
-        if git diff --staged --quiet; then
-          echo "Version already up to date."
-        else
-          git commit -m "Bump version to ${NEW_VERSION}"
+        # Call the function to compare versions
+        vercomp "$LATEST_SNAKEMAKE_VERSION" "$CURRENT_VERSION"
+        VERSION_COMPARE_RESULT=$?
+
+        if [ "$VERSION_COMPARE_RESULT" -eq 1 ]; then
+          echo "Latest version is newer. Updating Dockerfile."
+          sed -i "s/FROM snakemake\/snakemake:${CURRENT_VERSION}/FROM snakemake\/snakemake:${LATEST_SNAKEMAKE_VERSION}/g" Dockerfile
+          git add Dockerfile
+          git commit -m "Bump snakemake/snakemake base image to ${LATEST_SNAKEMAKE_VERSION}"
           git push
+        elif [ "$VERSION_COMPARE_RESULT" -eq 2 ]; then
+          echo "Current version in Dockerfile is newer than latest on Docker Hub. This should not happen, but not updating."
+        else
+          echo "Snakemake base image is already up to date ($CURRENT_VERSION)."
         fi
