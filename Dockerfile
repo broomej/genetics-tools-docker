@@ -5,4 +5,5 @@ ENV CONDA_PKGS="bioconda::bioconductor-genesis conda-forge::r-tidyverse \
 RUN eval "$(micromamba shell hook --shell bash)" && \
     micromamba activate /opt/conda/envs/snakemake && \
     micromamba install ${CONDA_PKGS} && \
-    micromamba clean --all -y
+    micromamba clean --all -y && \
+    Rscript -e "install.packages('plinkFile', repos='http://cran.r-project.org')"

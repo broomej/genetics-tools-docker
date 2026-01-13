@@ -14,10 +14,11 @@ estimation. Images are built and pushed when the base image is updated.
 * R packages
     * GENESIS and dependencies (gdsfmt, SeqArray, SeqVarTools, etc.)
     * Tidyverse packages (dplyr, tidyr, ggplot2, etc.) and GGally
+    * plinkFile
 * Snakemake
 
-All software is installed with micromamba. See the Dockerfile for which
-repositories specific packages are installed from.
+All software is installed with micromamba except `plinkFile`. See the Dockerfile
+for which repositories specific packages are installed from.
 
 ## Usage
 
