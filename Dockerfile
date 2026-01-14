@@ -1,4 +1,4 @@
-FROM snakemake/snakemake:v9.14.6
+FROM snakemake/snakemake:v9.13.7
 ENV CONDA_PKGS="bioconda::bioconductor-genesis conda-forge::r-tidyverse \
     conda-forge::r-ggally bioconda::plink bioconda::plink2 bioconda::vcftools \
     bioconda::bcftools"
