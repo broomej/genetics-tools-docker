@@ -12,9 +12,10 @@ estimation. Images are built and pushed when the base image is updated.
 * VCFtools
 * BCFtools
 * METAL
+* Metasoft and ForestPMPlot
 * R packages
     * GENESIS and dependencies (gdsfmt, SeqArray, SeqVarTools, etc.)
-    * Tidyverse packages (dplyr, tidyr, ggplot2, etc.) and GGally
+    * Tidyverse packages (dplyr, tidyr, ggplot2, etc.)
     * plinkFile
 * Snakemake
 
@@ -27,7 +28,7 @@ The primary use-case for this image, and the reason it uses
 `snakemake/snakemake` as its base image, is to be invoked from a Snakemake
 workflow. Add the line
 
-```sh
+```python
 container: "docker://broome/genetics-tools"
 ```
 
