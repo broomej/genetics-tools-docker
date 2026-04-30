@@ -26,4 +26,8 @@ RUN eval "$(micromamba shell hook --shell bash)" && \
     Rscript -e "install.packages(c('tidyverse', 'plinkFile', 'BiocManager'), repos='http://cran.r-project.org')" && \
     Rscript -e "BiocManager::install('GENESIS')" && \
     micromamba remove cmake gcc_linux-64 && \
-    micromamba clean --all -y
+    micromamba clean --all -y && \
+    rm -rf /tmp/* /var/tmp/* && \
+    find /opt/conda -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true && \
+    rm -rf /opt/conda/envs/snakemake/share/doc && \
+    rm -rf /opt/conda/envs/snakemake/share/man
