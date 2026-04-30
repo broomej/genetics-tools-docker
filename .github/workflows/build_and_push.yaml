@@ -54,8 +54,10 @@ jobs:
             return 0
         }
 
+        set +e
         vercomp "${{ steps.snakemake_version.outputs.LATEST_SNAKEMAKE_VERSION }}" "${{ steps.version.outputs.CURRENT_VERSION }}"
         VERSION_COMPARE_RESULT=$?
+        set -e
 
         if [ "$VERSION_COMPARE_RESULT" -eq 1 ]; then
           echo "NEW_VERSION_FOUND=true" >> $GITHUB_OUTPUT
