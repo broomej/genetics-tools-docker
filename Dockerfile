@@ -1,4 +1,4 @@
-FROM snakemake/snakemake:v9.19.0
+FROM snakemake/snakemake:v9.20.0
 
 COPY install_scripts/ /dockerbld/install_scripts/
 
